@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "幻乐笔记",
+    "slug": "clound-note",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "scheme": "cloundnote",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#3b82f6"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.clound.note"
+    },
+    "android": {
+      "package": "com.clound.note"
+    },
+    "extra": {
+      "API_BASE_URL": "http://localhost:3000/api"
+    }
+  }
+}
