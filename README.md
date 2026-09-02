@@ -1,4 +1,4 @@
-# 幻乐笔记
+# 富商笔记
 
 一个轻量级移动端笔记应用，移动端使用 React Native (Expo)，后端使用 Express + Prisma + MySQL。
 

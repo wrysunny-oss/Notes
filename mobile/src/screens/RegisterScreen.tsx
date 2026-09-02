@@ -5,6 +5,7 @@ import { useAuthStore } from '../stores/authStore'
 import { toast } from '../stores/toastStore'
 import type { RootStackParamList } from '../navigation/AppNavigator'
 import { theme } from '../theme'
+import { APP_CONFIG } from '../lib/config'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Register'>
 
@@ -57,7 +58,7 @@ export default function RegisterScreen({ navigation }: Props) {
             <Text style={styles.logoEmoji}>✏️</Text>
           </View>
           <Text style={styles.title}>创建账号</Text>
-          <Text style={styles.slogan}>开启你的幻乐笔记之旅</Text>
+          <Text style={styles.slogan}>{APP_CONFIG.slogan}</Text>
         </View>
 
         <View style={styles.form}>

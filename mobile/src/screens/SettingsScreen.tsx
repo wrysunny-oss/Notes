@@ -7,6 +7,7 @@ import TagChip from '../components/TagChip'
 import { toast } from '../stores/toastStore'
 import { confirm } from '../stores/confirmStore'
 import { theme, initials, colorFromString } from '../theme'
+import { APP_CONFIG } from '../lib/config'
 
 export default function SettingsScreen() {
   const { user, logout, updateProfile } = useAuthStore()
@@ -183,11 +184,11 @@ export default function SettingsScreen() {
       <View style={styles.section}>
         <View style={styles.aboutRow}>
           <Text style={styles.aboutLabel}>版本</Text>
-          <Text style={styles.aboutValue}>1.0.0</Text>
+          <Text style={styles.aboutValue}>{APP_CONFIG.version}</Text>
         </View>
         <View style={[styles.aboutRow, { alignItems: 'flex-start' }]}>
           <Text style={styles.aboutLabel}>简介</Text>
-          <Text style={[styles.aboutValue, { flexShrink: 1, flexWrap: 'wrap', maxWidth: '70%' }]}>幻乐笔记，记录每一刻灵感，随时随地同步你的笔记。</Text>
+          <Text style={[styles.aboutValue, { flexShrink: 1, flexWrap: 'wrap', maxWidth: '70%' }]}>{APP_CONFIG.description}</Text>
         </View>
       </View>
 

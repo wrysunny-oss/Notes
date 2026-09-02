@@ -5,6 +5,7 @@ import { useAuthStore } from '../stores/authStore'
 import { toast } from '../stores/toastStore'
 import type { RootStackParamList } from '../navigation/AppNavigator'
 import { theme } from '../theme'
+import { APP_CONFIG } from '../lib/config'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>
 
@@ -32,8 +33,8 @@ export default function LoginScreen({ navigation }: Props) {
           <View style={styles.logo}>
             <Text style={styles.logoEmoji}>📒</Text>
           </View>
-          <Text style={styles.brand}>幻乐笔记</Text>
-          <Text style={styles.slogan}>记录每一刻灵感 · 随时随地同步</Text>
+          <Text style={styles.brand}>{APP_CONFIG.name}</Text>
+          <Text style={styles.slogan}>{APP_CONFIG.tagline}</Text>
         </View>
 
         <View style={styles.form}>
@@ -77,7 +78,7 @@ export default function LoginScreen({ navigation }: Props) {
 
           <View style={styles.demoTip}>
             <Text style={styles.demoTipText}>
-              演示账号：demo@clound.note / 123456
+              演示账号：{APP_CONFIG.demoAccount} / {APP_CONFIG.demoPassword}
             </Text>
           </View>
         </View>

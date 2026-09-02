@@ -3,6 +3,8 @@ import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
+const APP_NAME = process.env.APP_NAME || '富商笔记'
+
 async function main() {
   const passwordHash = await bcrypt.hash('123456', 10)
   const user = await prisma.user.upsert({
@@ -28,7 +30,7 @@ async function main() {
   const workTag = await prisma.tag.findFirst({ where: { userId: user.id, name: '工作' } })
   await prisma.note.create({
     data: {
-      title: '欢迎使用幻乐笔记',
+      title: `欢迎使用${APP_NAME}`,
       content: '# 欢迎\n\n这是你的第一篇笔记，可以开始编辑了。',
       userId: user.id,
       pinned: true,

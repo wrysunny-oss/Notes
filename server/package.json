@@ -1,11 +1,11 @@
 {
   "name": "clound-note-server",
   "version": "1.0.0",
-  "description": "幻乐笔记 App 后端 - Express + Prisma + MySQL",
+  "description": "富商笔记 App 后端 - Express + Prisma + MySQL",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc -p .",
+    "build": "npx tsc -p .",
     "start": "node dist/index.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev --name init",
