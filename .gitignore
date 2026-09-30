@@ -45,3 +45,7 @@ Thumbs.db
 # Misc
 coverage/
 .cache/
+
+# Release artifacts (APK 不入库，通过构建产物/Release 页面分发)
+/*.apk
+*.diff.txt
