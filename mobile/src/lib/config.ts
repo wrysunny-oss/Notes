@@ -25,7 +25,7 @@ export const APP_CONFIG = {
   /** 演示密码 */
   demoPassword: '123456',
   /** 客服 / 注销联系邮箱 */
-  contactEmail: 'support@huanyuexingwen.com',
+  contactEmail: '13780076750@163.com',
   /** 隐私政策更新日期 */
   privacyUpdateDate: '2026年09月30日',
   /** 隐私政策生效日期 */
