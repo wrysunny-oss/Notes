@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Modal, Pressable } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useAuthStore } from '../stores/authStore'
+import type { RootStackParamList } from '../navigation/AppNavigator'
 import { useNotesStore } from '../stores/noteStore'
 import { api } from '../lib/api'
 import TagChip from '../components/TagChip'
@@ -10,7 +13,8 @@ import { theme, initials, colorFromString } from '../theme'
 import { APP_CONFIG } from '../lib/config'
 
 export default function SettingsScreen() {
-  const { user, logout, updateProfile } = useAuthStore()
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+  const { user, logout, updateProfile, deactivate } = useAuthStore()
   const token = useAuthStore((s) => s.token)!
   const { tags, fetchTags, createTag, updateNote } = useNotesStore() // updateNote 占位避免警告
   void updateNote
@@ -21,6 +25,9 @@ export default function SettingsScreen() {
   const [newPwd, setNewPwd] = useState('')
   const [confirmPwd, setConfirmPwd] = useState('')
   const [editingTag, setEditingTag] = useState<{ id: string; name: string; color: string } | null>(null)
+  const [deactivateVisible, setDeactivateVisible] = useState(false)
+  const [deactivatePwd, setDeactivatePwd] = useState('')
+  const [deactivating, setDeactivating] = useState(false)
 
   useEffect(() => {
     fetchTags(token)
@@ -102,6 +109,28 @@ export default function SettingsScreen() {
     if (ok) logout()
   }
 
+  async function onDeactivate() {
+    if (!deactivatePwd) return toast.error('请输入登录密码以确认注销')
+    const ok = await confirm({
+      title: '最后确认',
+      message: '账号注销后不可恢复，全部笔记与标签将被永久删除。确定继续吗？',
+      confirmText: '确认注销',
+      danger: true,
+    })
+    if (!ok) return
+    setDeactivating(true)
+    try {
+      const msg = await deactivate(deactivatePwd)
+      setDeactivateVisible(false)
+      setDeactivatePwd('')
+      toast.success(msg || '账号已注销')
+    } catch (e: any) {
+      toast.error('注销失败：' + e.message)
+    } finally {
+      setDeactivating(false)
+    }
+  }
+
   const userInitial = initials(user?.nickname, user?.email)
   const avatarColor = colorFromString(user?.username || user?.email || 'X')
 
@@ -180,6 +209,27 @@ export default function SettingsScreen() {
         </TouchableOpacity>
       </View>
 
+      {/* 法律与隐私 —— 常驻入口（主页 → 我的 → 协议，仅 2 步触达） */}
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>法律与隐私</Text>
+        </View>
+        <TouchableOpacity
+          style={styles.linkRow}
+          onPress={() => navigation.navigate('Legal', { type: 'agreement' })}
+        >
+          <Text style={styles.linkRowText}>📄 用户协议</Text>
+          <Text style={styles.linkRowArrow}>›</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.linkRow}
+          onPress={() => navigation.navigate('Legal', { type: 'privacy' })}
+        >
+          <Text style={styles.linkRowText}>🔒 隐私政策</Text>
+          <Text style={styles.linkRowArrow}>›</Text>
+        </TouchableOpacity>
+      </View>
+
       {/* 关于 */}
       <View style={styles.section}>
         <View style={styles.aboutRow}>
@@ -192,9 +242,47 @@ export default function SettingsScreen() {
         </View>
       </View>
 
+      <TouchableOpacity style={styles.deactivateBtn} onPress={() => setDeactivateVisible(true)}>
+        <Text style={styles.deactivateText}>注销账号</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity style={styles.logoutBtn} onPress={onLogout}>
         <Text style={styles.logoutText}>退出登录</Text>
       </TouchableOpacity>
+
+      {/* 注销账号密码确认 Modal */}
+      <Modal visible={deactivateVisible} transparent animationType="fade" onRequestClose={() => setDeactivateVisible(false)}>
+        <Pressable style={styles.modalOverlay} onPress={() => setDeactivateVisible(false)}>
+          <Pressable style={styles.editSheet} onPress={(e) => e.stopPropagation()}>
+            <Text style={styles.sheetTitle}>注销账号</Text>
+            <Text style={styles.deactivateWarn}>
+              注销后账号将无法登录，账号下全部笔记、标签等数据将被永久删除且无法恢复。请输入登录密码以确认：
+            </Text>
+            <TextInput
+              style={styles.input}
+              placeholder="登录密码"
+              placeholderTextColor={theme.textLight}
+              secureTextEntry
+              value={deactivatePwd}
+              onChangeText={setDeactivatePwd}
+            />
+            <View style={styles.sheetActions}>
+              <TouchableOpacity
+                style={[styles.sheetBtn, { backgroundColor: theme.border }]}
+                onPress={() => {
+                  setDeactivateVisible(false)
+                  setDeactivatePwd('')
+                }}
+              >
+                <Text style={[styles.btnText, { color: theme.text }]}>取消</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.sheetBtn, { backgroundColor: theme.danger }]} onPress={onDeactivate} disabled={deactivating}>
+                <Text style={styles.btnText}>{deactivating ? '注销中…' : '确认注销'}</Text>
+              </TouchableOpacity>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
 
       {/* 编辑标签 Modal */}
       <Modal visible={!!editingTag} transparent animationType="fade" onRequestClose={() => setEditingTag(null)}>
@@ -324,6 +412,27 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   logoutText: { color: theme.danger, fontWeight: '700', fontSize: 15 },
+  linkRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 13,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.border,
+  },
+  linkRowText: { fontSize: 14, color: theme.text, fontWeight: '500' },
+  linkRowArrow: { fontSize: 20, color: theme.textLight },
+  deactivateBtn: {
+    backgroundColor: theme.card,
+    borderRadius: 14,
+    paddingVertical: 14,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: theme.danger,
+    marginTop: 4,
+  },
+  deactivateText: { color: theme.danger, fontWeight: '700', fontSize: 15 },
+  deactivateWarn: { fontSize: 13, lineHeight: 20, color: theme.textMuted, marginBottom: 12 },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 24, zIndex: 9998, elevation: 9998 },
   editSheet: {
     backgroundColor: theme.card,

@@ -17,6 +17,11 @@ web-build/
 *.key
 *.pem
 
+# Temp files
+expo_err.txt
+expo_out.txt
+_*.js
+
 # Logs
 *.log
 npm-debug.log*

@@ -15,9 +15,11 @@ export default function LoginScreen({ navigation }: Props) {
   const [account, setAccount] = useState('')
   const [password, setPassword] = useState('')
   const [showPwd, setShowPwd] = useState(false)
+  const [agreed, setAgreed] = useState(false)
 
   async function submit() {
     if (!account || !password) return toast.error('请输入账号和密码')
+    if (!agreed) return toast.error('请先阅读并同意用户协议和隐私政策')
     try {
       await login(account, password)
       toast.success('登录成功')
@@ -66,6 +68,26 @@ export default function LoginScreen({ navigation }: Props) {
             <TouchableOpacity onPress={() => setShowPwd((v) => !v)} style={styles.eyeBtn}>
               <Text style={styles.eyeIcon}>{showPwd ? '🙈' : '👁'}</Text>
             </TouchableOpacity>
+          </View>
+
+          <View style={styles.agreementRow}>
+            <TouchableOpacity
+              onPress={() => setAgreed((v) => !v)}
+              hitSlop={8}
+              style={[styles.checkbox, !agreed && { backgroundColor: 'transparent' }]}
+            >
+              <Text style={{ color: '#fff', fontSize: 11 }}>{agreed ? '✓' : ''}</Text>
+            </TouchableOpacity>
+            <Text style={styles.agreementText}>
+              <Text>我已阅读并同意</Text>
+              <Text style={styles.agreementLink} onPress={() => navigation.navigate('Legal', { type: 'agreement' })}>
+                《用户协议》
+              </Text>
+              <Text>和</Text>
+              <Text style={styles.agreementLink} onPress={() => navigation.navigate('Legal', { type: 'privacy' })}>
+                《隐私政策》
+              </Text>
+            </Text>
           </View>
 
           <TouchableOpacity style={[styles.btn, loading && styles.btnDisabled]} onPress={submit} disabled={loading} activeOpacity={0.85}>
@@ -141,4 +163,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   demoTipText: { color: theme.primaryDark, fontSize: 12 },
+  agreementRow: { flexDirection: 'row', alignItems: 'center', marginTop: 20, flexWrap: 'wrap', gap: 8 },
+  checkbox: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    borderWidth: 1.5,
+    borderColor: theme.primary,
+    backgroundColor: theme.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  agreementText: { fontSize: 12, color: theme.textMuted, flexShrink: 1, flex: 1 },
+  agreementLink: { color: theme.primary, fontWeight: '600' },
 })

@@ -11,6 +11,7 @@ interface AuthState {
   login: (account: string, password: string) => Promise<void>
   register: (body: { email: string; username: string; password: string; nickname?: string }) => Promise<void>
   logout: () => Promise<void>
+  deactivate: (password: string) => Promise<string>
   refreshUser: () => Promise<void>
   updateProfile: (body: { nickname?: string; avatar?: string }) => Promise<void>
   clearError: () => void
@@ -63,6 +64,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   logout: async () => {
     await clearAuth()
     set({ token: null, user: null })
+  },
+
+  deactivate: async (password) => {
+    const token = get().token
+    if (!token) throw new Error('未登录')
+    const { message } = await api.auth.deactivate(token, password)
+    await clearAuth()
+    set({ token: null, user: null })
+    return message
   },
 
   refreshUser: async () => {

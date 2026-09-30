@@ -19,9 +19,15 @@ export const APP_CONFIG = {
   /** 关于页简介 */
   description: '富商笔记，记录每一刻灵感，随时随地同步你的笔记。',
   /** 软件版本号 */
-  version: '1.0.0',
+  version: '1.0.1',
   /** 演示账号 */
   demoAccount: 'demo@clound.note',
   /** 演示密码 */
   demoPassword: '123456',
+  /** 客服 / 注销联系邮箱 */
+  contactEmail: 'support@huanyuexingwen.com',
+  /** 隐私政策更新日期 */
+  privacyUpdateDate: '2026年09月30日',
+  /** 隐私政策生效日期 */
+  privacyEffectiveDate: '2026年09月30日',
 } as const

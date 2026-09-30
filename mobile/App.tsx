@@ -7,6 +7,7 @@ import { useAuthStore } from './src/stores/authStore'
 import AppNavigator from './src/navigation/AppNavigator'
 import ToastContainer from './src/components/Toast'
 import ConfirmDialog from './src/components/ConfirmDialog'
+import PrivacyConsent from './src/components/PrivacyConsent'
 import { theme } from './src/theme'
 
 export default function App() {
@@ -30,6 +31,7 @@ export default function App() {
       <SafeAreaProvider>
         <StatusBar style="dark" />
         <AppNavigator />
+        <PrivacyConsent />
         <ToastContainer />
         <ConfirmDialog />
       </SafeAreaProvider>

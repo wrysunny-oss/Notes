@@ -136,4 +136,28 @@ router.put('/password', authMiddleware, async (req: AuthRequest, res: Response, 
   }
 })
 
+// 账号注销：验证密码后永久删除账号（笔记、标签由外键级联删除）
+router.delete('/account', authMiddleware, async (req: AuthRequest, res: Response, next) => {
+  try {
+    const body = z
+      .object({ password: z.string().min(1, '请输入登录密码以确认注销') })
+      .parse(req.body)
+
+    const user = await prisma.user.findUnique({ where: { id: req.userId! } })
+    if (!user) throw ApiError.notFound('用户不存在')
+
+    const ok = await bcrypt.compare(body.password, user.passwordHash)
+    if (!ok) throw ApiError.badRequest('WRONG_PASSWORD', '密码错误，无法注销')
+
+    await prisma.$transaction([
+      prisma.revokedToken.deleteMany({ where: { userId: user.id } }),
+      prisma.user.delete({ where: { id: user.id } }),
+    ])
+
+    res.json({ message: '账号已注销，您的全部数据已被永久删除' })
+  } catch (e) {
+    next(e)
+  }
+})
+
 export default router

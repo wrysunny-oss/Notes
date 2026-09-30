@@ -62,6 +62,8 @@ export const api = {
       request<{ user: User }>('/auth/profile', { method: 'PUT', token, body }),
     updatePassword: (token: string, body: { oldPassword: string; newPassword: string }) =>
       request<{ message: string }>('/auth/password', { method: 'PUT', token, body }),
+    deactivate: (token: string, password: string) =>
+      request<{ message: string }>('/auth/account', { method: 'DELETE', token, body: { password } }),
   },
   notes: {
     list: (token: string, params: Record<string, any> = {}) =>

@@ -10,6 +10,7 @@ import NotesListScreen from '../screens/NotesListScreen'
 import NoteEditorScreen from '../screens/NoteEditorScreen'
 import TrashScreen from '../screens/TrashScreen'
 import SettingsScreen from '../screens/SettingsScreen'
+import LegalScreen from '../screens/LegalScreen'
 import { theme } from '../theme'
 
 export type RootStackParamList = {
@@ -17,6 +18,7 @@ export type RootStackParamList = {
   NoteEditor: { id?: string } | undefined
   Login: undefined
   Register: undefined
+  Legal: { type: 'privacy' | 'agreement' } | undefined
 }
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
@@ -110,6 +112,11 @@ export default function AppNavigator() {
             <Stack.Screen name="Register" component={RegisterScreen} options={{ title: '注册账号' }} />
           </>
         )}
+        <Stack.Screen
+          name="Legal"
+          component={LegalScreen}
+          options={({ route }) => ({ title: route.params?.type === 'agreement' ? '用户协议' : '隐私政策' })}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   )

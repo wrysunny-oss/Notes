@@ -2,23 +2,34 @@
   "expo": {
     "name": "富商笔记",
     "slug": "clound-note",
-    "version": "1.0.0",
+    "version": "1.0.1",
+    "owner": "wrysunnys-team",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "scheme": "cloundnote",
+    "icon": "./assets/icon.png",
     "splash": {
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#3b82f6"
+      "backgroundColor": "#6366f1"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.clound.note"
     },
     "android": {
-      "package": "com.clound.note"
+      "package": "com.clound.note",
+      "versionCode": 2,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#6366f1"
+      }
     },
     "extra": {
-      "API_BASE_URL": "http://localhost:3000/api"
+      "API_BASE_URL": "https://note.huanyuexingwen.com/api",
+      "eas": {
+        "projectId": "b2076ce6-815a-4bb7-9f9d-0d1a18676210"
+      }
     }
   }
 }

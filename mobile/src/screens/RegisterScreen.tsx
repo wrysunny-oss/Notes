@@ -17,6 +17,7 @@ export default function RegisterScreen({ navigation }: Props) {
   const [nickname, setNickname] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
+  const [agreed, setAgreed] = useState(false)
 
   function strength(pwd: string): { score: number; label: string; color: string } {
     if (!pwd) return { score: 0, label: '', color: theme.border }
@@ -42,6 +43,7 @@ export default function RegisterScreen({ navigation }: Props) {
     if (!email || !username || !password) return toast.error('请填写必填项')
     if (password.length < 6) return toast.error('密码至少 6 位')
     if (password !== confirm) return toast.error('两次密码不一致')
+    if (!agreed) return toast.error('请先阅读并同意用户协议和隐私政策')
     try {
       await register({ email, username, password, nickname: nickname || undefined })
       toast.success('注册成功，已自动登录')
@@ -120,6 +122,26 @@ export default function RegisterScreen({ navigation }: Props) {
             onChangeText={setConfirm}
           />
 
+          <View style={styles.agreementRow}>
+            <TouchableOpacity
+              onPress={() => setAgreed((v) => !v)}
+              hitSlop={8}
+              style={[styles.checkbox, !agreed && { backgroundColor: 'transparent' }]}
+            >
+              <Text style={{ color: '#fff', fontSize: 11 }}>{agreed ? '✓' : ''}</Text>
+            </TouchableOpacity>
+            <Text style={styles.agreementText}>
+              <Text>我已阅读并同意</Text>
+              <Text style={styles.agreementLink} onPress={() => navigation.navigate('Legal', { type: 'agreement' })}>
+                《用户协议》
+              </Text>
+              <Text>和</Text>
+              <Text style={styles.agreementLink} onPress={() => navigation.navigate('Legal', { type: 'privacy' })}>
+                《隐私政策》
+              </Text>
+            </Text>
+          </View>
+
           <TouchableOpacity style={[styles.btn, loading && styles.btnDisabled]} onPress={submit} disabled={loading} activeOpacity={0.85}>
             <Text style={styles.btnText}>{loading ? '提交中…' : '注 册'}</Text>
           </TouchableOpacity>
@@ -179,4 +201,17 @@ const styles = StyleSheet.create({
   linkBtn: { alignItems: 'center', paddingVertical: 14 },
   linkHint: { color: theme.textMuted, fontSize: 13 },
   linkText: { color: theme.accent, fontWeight: '600' },
+  agreementRow: { flexDirection: 'row', alignItems: 'center', marginTop: 18, flexWrap: 'wrap', gap: 8 },
+  checkbox: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    borderWidth: 1.5,
+    borderColor: theme.accent,
+    backgroundColor: theme.accent,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  agreementText: { fontSize: 12, color: theme.textMuted, flexShrink: 1, flex: 1 },
+  agreementLink: { color: theme.accent, fontWeight: '600' },
 })
